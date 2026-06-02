@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ Письма Счастья — Генератор претензий</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #e63946;
+  --red-dark: #c1121f;
+  --ink: #0d1b2a;
+  --ink2: #1b2a3b;
+  --fog: #f4f1eb;
+  --fog2: #ede9df;
+  --steel: #457b9d;
+  --steel-light: #a8dadc;
+  --gold: #e9c46a;
+  --ok: #2a9d8f;
+  --warn: #e76f51;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--fog);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 15px;
+}
+
+/* ── NAV ── */
+.nav {
+  background: var(--ink);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  height: 60px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.4);
+}
+.nav-logo {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1rem;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+.nav-logo span { color: var(--red); }
+.nav-tabs {
+  display: flex;
+  gap: 4px;
+}
+.nav-tab {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.nav-tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-tab.active { color: #fff; background: var(--red); }
+
+/* ── PAGES ── */
+.page { display: none; animation: fadeIn 0.35s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── HERO ── */
+.hero {
+  background: var(--ink2);
+  color: #fff;
+  padding: 64px 40px 56px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(230,57,70,0.18) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-inner { max-width: 700px; margin: 0 auto; text-align: center; position: relative; }
+.hero-badge {
+  display: inline-block;
+  background: var(--red);
+  color: #fff;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  line-height: 1.15;
+  margin-bottom: 18px;
+  font-weight: 900;
+}
+.hero h1 em { color: var(--red); font-style: normal; }
+.hero p {
+  font-size: 1.05rem;
+  opacity: 0.75;
+  line-height: 1.7;
+  max-width: 520px;
+  margin: 0 auto 36px;
+}
+.hero-cta {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 26px;
+  border-radius: 8px;
+  border: none;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-decoration: none;
+}
+.btn-primary { background: var(--red); color: #fff; }
+.btn-primary:hover { background: var(--red-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(230,57,70,0.35); }
+.btn-ghost { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+.btn-ghost:hover { background: rgba(255,255,255,0.18); transform: translateY(-2px); }
+
+/* ── STATS ── */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  background: var(--fog2);
+}
+@media (max-width: 700px) { .stats { grid-template-columns: repeat(2,1fr); } }
+.stat {
+  background: #fff;
+  padding: 28px 20px;
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: var(--red);
+  display: block;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.stat-label { font-size: 0.78rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ── CARDS GRID ── */
+.section { max-width: 1100px; margin: 0 auto; padding: 48px 24px; }
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.section-sub { color: #888; margin-bottom: 32px; font-size: 0.92rem; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+@media (max-width: 900px) { .grid-2 { grid-template-columns:1fr; } .grid-3 { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .grid-3 { grid-template-columns: 1fr; } }
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+.card-icon { font-size: 2rem; margin-bottom: 14px; display: block; }
+.card h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: 8px; }
+.card p { font-size: 0.88rem; color: #666; line-height: 1.6; }
+
+/* ── FEATURE STEPS ── */
+.steps { display: flex; flex-direction: column; gap: 20px; }
+.step {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 22px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.step-num {
+  width: 38px;
+  height: 38px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.step-body h4 { font-weight: 600; margin-bottom: 4px; }
+.step-body p { font-size: 0.88rem; color: #666; line-height: 1.5; }
+
+/* ── FORM ── */
+.form-wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+@media (max-width: 900px) { .form-grid { grid-template-columns:1fr; } }
+
+.form-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.form-card h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--fog2);
+}
+
+label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--steel);
+  margin-bottom: 6px;
+  margin-top: 18px;
+}
+label:first-of-type { margin-top: 0; }
+
+input, textarea, select {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid #e0ddd6;
+  border-radius: 8px;
+  font-size: 0.93rem;
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--fog);
+  color: var(--ink);
+  transition: all 0.2s;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--red);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(230,57,70,0.12);
+}
+select { cursor: pointer; }
+
+.btn-generate {
+  width: 100%;
+  padding: 15px;
+  background: var(--red);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'IBM Plex Sans', sans-serif;
+  cursor: pointer;
+  margin-top: 24px;
+  transition: all 0.25s;
+  letter-spacing: 0.3px;
+}
+.btn-generate:hover { background: var(--red-dark); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(230,57,70,0.3); }
+
+.btn-ai {
+  width: 100%;
+  padding: 13px;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.93rem;
+  font-weight: 600;
+  font-family: 'IBM Plex Sans', sans-serif;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-ai:hover { background: #0d1b2a; transform: translateY(-2px); }
+.btn-ai.loading { opacity: 0.7; pointer-events: none; }
+
+/* Result panel */
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--fog2);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.result-header h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; }
+.result-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-sm {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 7px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-copy { background: var(--steel); color: #fff; }
+.btn-copy:hover { background: var(--ink); }
+.btn-save { background: var(--ok); color: #fff; }
+.btn-save:hover { background: #218b7e; }
+.btn-print { background: var(--fog2); color: var(--ink); }
+.btn-print:hover { background: #ddd; }
+
+#result {
+  white-space: pre-line;
+  line-height: 2;
+  font-family: 'Times New Roman', Georgia, serif;
+  font-size: 1.05rem;
+  min-height: 600px;
+  color: #1a1a1a;
+}
+#result.placeholder { color: #bbb; font-family: 'IBM Plex Sans', sans-serif; font-size: 0.95rem; line-height: 1.6; font-style: italic; }
+
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #1b2a3b, #0d1b2a);
+  color: #fff;
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-left: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: 0.5px;
+}
+.ai-dot { width:7px; height:7px; background:var(--ok); border-radius:50%; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(1.3);} }
+
+/* ── HISTORY PAGE ── */
+.history-wrap { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+.history-item {
+  background: #fff;
+  border-radius: 12px;
+  padding: 22px 26px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.history-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-1px); }
+.history-icon { font-size: 1.8rem; flex-shrink: 0; }
+.history-body { flex: 1; min-width: 0; }
+.history-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.history-meta { font-size: 0.8rem; color: #888; }
+.history-tag {
+  font-size: 0.72rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tag-subscription { background: #e8f4f8; color: var(--steel); }
+.tag-goods { background: #fef3e2; color: var(--warn); }
+.tag-service { background: #e8f5e9; color: var(--ok); }
+.tag-course { background: #fce4ec; color: var(--red); }
+.history-del { background: none; border: none; cursor: pointer; font-size: 1.2rem; opacity: 0.4; transition: opacity 0.2s; flex-shrink: 0; }
+.history-del:hover { opacity: 1; }
+.empty-state { text-align: center; padding: 80px 24px; color: #aaa; }
+.empty-state .empty-icon { font-size: 4rem; margin-bottom: 16px; }
+.empty-state p { font-size: 1rem; }
+
+/* ── LAWS PAGE ── */
+.laws-wrap { max-width: 1000px; margin: 0 auto; padding: 40px 24px; }
+.law-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px 32px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-left: 4px solid var(--red);
+  transition: all 0.2s;
+}
+.law-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+.law-card h3 { font-family: 'IBM Plex Mono', monospace; font-size: 0.95rem; color: var(--red); margin-bottom: 8px; }
+.law-card h4 { font-size: 1.05rem; font-weight: 600; margin-bottom: 10px; }
+.law-card p { font-size: 0.9rem; color: #555; line-height: 1.7; }
+.law-tip {
+  display: inline-block;
+  background: var(--fog2);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  color: #666;
+  margin-top: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ── TIPS PAGE ── */
+.tips-wrap { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+.tip-block {
+  background: #fff;
+  border-radius: 14px;
+  padding: 30px;
+  margin-bottom: 22px;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.tip-block h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+.tip-block ul { padding-left: 18px; }
+.tip-block li { font-size: 0.92rem; color: #444; line-height: 1.8; margin-bottom: 2px; }
+.tip-block li::marker { color: var(--red); }
+.alert-box {
+  background: #fff8e1;
+  border: 1.5px solid var(--gold);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-top: 16px;
+  font-size: 0.88rem;
+  color: #5a4a00;
+  line-height: 1.7;
+}
+.timeline {
+  position: relative;
+  padding-left: 28px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--fog2);
+}
+.tl-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -24px;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  background: var(--red);
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px var(--red);
+}
+.tl-item h4 { font-weight: 600; font-size: 0.9rem; }
+.tl-item p { font-size: 0.85rem; color: #666; margin-top: 3px; line-height: 1.5; }
+
+/* ── CHECKER PAGE ── */
+.checker-wrap { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+.checker-card { background: #fff; border-radius: 16px; padding: 36px; box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+.checker-q {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+.checker-opts { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+.checker-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border: 1.5px solid #e0ddd6;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--fog);
+}
+.checker-opt:hover { border-color: var(--red); background: #fff8f8; }
+.checker-opt.selected { border-color: var(--red); background: #fff0f0; }
+.checker-opt span { font-size: 0.92rem; font-weight: 500; }
+.checker-dot {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.checker-opt.selected .checker-dot { border-color: var(--red); background: var(--red); }
+.checker-opt.selected .checker-dot::after { content:''; width:6px; height:6px; background:#fff; border-radius:50%; }
+.progress-bar { height: 4px; background: var(--fog2); border-radius: 4px; margin-bottom: 28px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--red); border-radius: 4px; transition: width 0.4s ease; }
+.step-counter { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; color: #aaa; margin-bottom: 10px; }
+.checker-result {
+  background: var(--fog);
+  border-radius: 12px;
+  padding: 26px;
+  border: 2px solid var(--fog2);
+}
+.checker-result.success { border-color: var(--ok); background: #f0faf9; }
+.checker-result.warning { border-color: var(--gold); background: #fff9e6; }
+.checker-result.danger { border-color: var(--red); background: #fff5f5; }
+.checker-result h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 12px; }
+.checker-result p { font-size: 0.9rem; color: #444; line-height: 1.7; }
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  padding: 40px 24px;
+  color: #aaa;
+  font-size: 0.82rem;
+  border-top: 1px solid #eee;
+  margin-top: 40px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: var(--ink);
+  color: #fff;
+  padding: 14px 22px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s;
+  pointer-events: none;
+  max-width: 320px;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.success { border-left: 4px solid var(--ok); }
+.toast.error { border-left: 4px solid var(--red); }
+
+/* ── SPINNER ── */
+.spinner {
+  width: 18px; height: 18px;
+  border: 2.5px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 36px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.modal h2 { font-family: 'Playfair Display', serif; margin-bottom: 20px; }
+.modal-text { white-space: pre-line; line-height: 1.9; font-family: 'Times New Roman', serif; font-size: 1rem; color: #111; }
+.modal-close { float: right; background: var(--fog2); border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-weight: 600; }
+
+@media print {
+  .nav, footer, .result-actions, .btn-generate, .btn-ai, label, input, select, textarea, .form-card:first-child { display: none !important; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-card.result-card { box-shadow: none; border: none; }
+  #result { min-height: auto; font-size: 12pt; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">⚡ <span>Письма</span>Счастья</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('home')">Главная</button>
+    <button class="nav-tab" onclick="showPage('generator')">Генератор</button>
+    <button class="nav-tab" onclick="showPage('checker')">Чек-лист</button>
+    <button class="nav-tab" onclick="showPage('laws')">Законы</button>
+    <button class="nav-tab" onclick="showPage('history')">История</button>
+    <button class="nav-tab" onclick="showPage('tips')">Советы</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     PAGE: HOME
+══════════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-inner">
+      <span class="hero-badge">⚡ 2025 · ЗоЗПП</span>
+      <h1>Верни свои деньги<br>без <em>суда и потерь</em></h1>
+      <p>Генератор досудебных претензий по Закону о защите прав потребителей. Составьте юридически грамотное письмо за 2 минуты — бесплатно и анонимно.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" onclick="showPage('generator')">🚀 Составить претензию</button>
+        <button class="btn btn-ghost" onclick="showPage('checker')">📋 Проверить ситуацию</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="stat-num">4</span><span class="stat-label">типа претензий</span></div>
+    <div class="stat"><span class="stat-num">10</span><span class="stat-label">дней на ответ</span></div>
+    <div class="stat"><span class="stat-num">50%</span><span class="stat-label">штраф при отказе</span></div>
+    <div class="stat"><span class="stat-num">3%</span><span class="stat-label">неустойка в день</span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Как это работает</div>
+    <div class="section-sub">Три шага до возврата денег</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <h4>Заполните форму</h4>
+          <p>Выберите тип претензии, укажите ваши данные, данные компании, сумму и обстоятельства. Всё занимает 2–3 минуты.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <h4>Получите готовое письмо</h4>
+          <p>Шаблон заполнится автоматически. Или воспользуйтесь AI-улучшением — Claude адаптирует текст под вашу ситуацию.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <h4>Отправьте претензию</h4>
+          <p>Скопируйте и отправьте на email компании. Или распечатайте и отправьте заказным письмом с уведомлением о вручении.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-body">
+          <h4>Ждите 10 дней</h4>
+          <p>Компания обязана ответить в течение 10 дней. Если нет — вы можете идти в суд и дополнительно взыскать штраф 50% и неустойку 3% в день.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0">
+    <div class="section-title">Типы претензий</div>
+    <div class="section-sub">Выберите подходящую ситуацию</div>
+    <div class="grid-3">
+      <div class="card" onclick="showPage('generator')" style="cursor:pointer">
+        <span class="card-icon">💳</span>
+        <h3>Подписка / автопродление</h3>
+        <p>Списали деньги без предупреждения, не можете отказаться от подписки, период охлаждения</p>
+      </div>
+      <div class="card" onclick="showPage('generator')" style="cursor:pointer">
+        <span class="card-icon">📦</span>
+        <h3>Товар ненадлежащего качества</h3>
+        <p>Товар сломан, не работает, не соответствует описанию — требуете обмена или возврата</p>
+      </div>
+      <div class="card" onclick="showPage('generator')" style="cursor:pointer">
+        <span class="card-icon">🔧</span>
+        <h3>Некачественная услуга</h3>
+        <p>Услуга не оказана, оказана частично или с существенными недостатками</p>
+      </div>
+      <div class="card" onclick="showPage('generator')" style="cursor:pointer">
+        <span class="card-icon">🎓</span>
+        <h3>Онлайн-курс / инфопродукт</h3>
+        <p>Купили курс, он не соответствует ожиданиям — возврат по ст. 26.1 ЗоЗПП</p>
+      </div>
+      <div class="card" style="border: 2px dashed #ddd; cursor: default; opacity:0.6">
+        <span class="card-icon">🏗️</span>
+        <h3>Скоро: ЖКХ</h3>
+        <p>Претензии управляющей компании, ресурсоснабжающим организациям</p>
+      </div>
+      <div class="card" style="border: 2px dashed #ddd; cursor: default; opacity:0.6">
+        <span class="card-icon">✈️</span>
+        <h3>Скоро: Авиа/ж/д</h3>
+        <p>Задержка рейса, потеря багажа, отмена билетов</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2025 ПисьмаСчастья · Данные не сохраняются · Работает в браузере</footer>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE: GENERATOR
+══════════════════════════════════════════════ -->
+<div id="page-generator" class="page">
+  <div class="form-wrap">
+    <div style="margin-bottom:28px">
+      <div class="section-title">Генератор претензий</div>
+      <div class="section-sub">Заполните форму — получите готовый документ</div>
+    </div>
+
+    <div class="form-grid">
+      <!-- LEFT: Form -->
+      <div class="form-card">
+        <h2>Ваши данные</h2>
+
+        <label>Тип претензии</label>
+        <select id="template">
+          <option value="subscription">💳 Возврат за подписку / автопродление</option>
+          <option value="goods">📦 Товар ненадлежащего качества</option>
+          <option value="service">🔧 Неоказанная / некачественная услуга</option>
+          <option value="online-course">🎓 Онлайн-курс / инфопродукт</option>
+        </select>
+
+        <label>ФИО полностью</label>
+        <input type="text" id="fio" placeholder="Иванов Иван Иванович">
+
+        <label>Адрес регистрации (с индексом)</label>
+        <input type="text" id="address" placeholder="123456, г. Москва, ул. Ленина, д. 10, кв. 50">
+
+        <label>Телефон и e-mail</label>
+        <input type="text" id="contacts" placeholder="+7 (999) 123-45-67 · ivanov@mail.ru">
+
+        <label>Название компании</label>
+        <input type="text" id="company" placeholder="ООО «Рога и копыта» или ИП Иванов И.И.">
+
+        <label>Юридический адрес компании</label>
+        <input type="text" id="companyAddress" placeholder="101000, г. Москва, ул. Тверская, д. 1">
+
+        <label>Дата оплаты / заключения договора</label>
+        <input type="text" id="date" placeholder="12.03.2025">
+
+        <label>Сумма к возврату (руб.)</label>
+        <input type="number" id="amount" placeholder="4990">
+
+        <label>Способ оплаты</label>
+        <input type="text" id="payment" placeholder="картой через ЮKassa, транзакция №123456789">
+
+        <label>Обстоятельства дела (опционально)</label>
+        <textarea id="details" rows="4" placeholder="Подпиской не пользовался(ась), услуга не оказана, хочу отказаться в период охлаждения и т.д."></textarea>
+
+        <button class="btn-generate" onclick="generate()">🚀 Сгенерировать претензию</button>
+        <button class="btn-ai" onclick="generateAI()" id="aiBtn">
+          <span id="aiIcon">✨</span>
+          <span id="aiText">Улучшить с помощью AI</span>
+        </button>
+        <div style="font-size:0.76rem;color:#aaa;text-align:center;margin-top:8px;font-family:'IBM Plex Mono',monospace;">AI адаптирует текст под вашу конкретную ситуацию</div>
+      </div>
+
+      <!-- RIGHT: Result -->
+      <div class="form-card result-card" style="position:sticky;top:76px">
+        <div class="result-header">
+          <h2>Готовая претензия</h2>
+          <div class="result-actions">
+            <button class="btn-sm btn-print" onclick="window.print()">🖨️ Печать</button>
+            <button class="btn-sm btn-save" onclick="saveToHistory()">💾 Сохранить</button>
+            <button class="btn-sm btn-copy" onclick="copyResult()">📋 Копировать</button>
+          </div>
+        </div>
+        <div id="result" class="placeholder">Заполните форму слева и нажмите «Сгенерировать претензию»</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2025 ПисьмаСчастья · Данные не покидают ваш браузер</footer>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE: CHECKER
+══════════════════════════════════════════════ -->
+<div id="page-checker" class="page">
+  <div class="checker-wrap">
+    <div style="margin-bottom:32px">
+      <div class="section-title">Чек-лист потребителя</div>
+      <div class="section-sub">Ответьте на вопросы — узнайте свои шансы на возврат</div>
+    </div>
+    <div class="checker-card">
+      <div id="checker-content"></div>
+    </div>
+  </div>
+  <footer>© 2025 ПисьмаСчастья</footer>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE: LAWS
+══════════════════════════════════════════════ -->
+<div id="page-laws" class="page">
+  <div class="laws-wrap">
+    <div style="margin-bottom:32px">
+      <div class="section-title">Законодательная база</div>
+      <div class="section-sub">Ключевые статьи, на которые опираются претензии</div>
+    </div>
+
+    <div class="law-card">
+      <h3>Ст. 32 ЗоЗПП</h3>
+      <h4>Право потребителя на отказ от услуги</h4>
+      <p>Потребитель вправе отказаться от исполнения договора об оказании услуг в любое время при условии оплаты исполнителю фактически понесённых им расходов. Это право нельзя ограничить договором.</p>
+      <span class="law-tip">→ Применяется: подписки, онлайн-курсы, любые услуги</span>
+    </div>
+
+    <div class="law-card">
+      <h3>Ст. 18 ЗоЗПП</h3>
+      <h4>Права потребителя при обнаружении недостатков товара</h4>
+      <p>При обнаружении в товаре недостатков потребитель вправе: потребовать замены на товар той же марки; потребовать соразмерного уменьшения цены; потребовать безвозмездного устранения недостатков; отказаться от исполнения договора и потребовать возврата денег. Продавец обязан принять товар и провести проверку качества.</p>
+      <span class="law-tip">→ Применяется: товары ненадлежащего качества</span>
+    </div>
+
+    <div class="law-card">
+      <h3>Ст. 29 ЗоЗПП</h3>
+      <h4>Права потребителя при обнаружении недостатков выполненной работы</h4>
+      <p>При обнаружении недостатков выполненной работы (оказанной услуги) потребитель вправе по своему выбору потребовать безвозмездного устранения недостатков, уменьшения цены, возмещения расходов или отказаться от договора с возвратом уплаченной суммы.</p>
+      <span class="law-tip">→ Применяется: некачественные услуги, ремонт, строительство</span>
+    </div>
+
+    <div class="law-card">
+      <h3>Ст. 26.1 ЗоЗПП</h3>
+      <h4>Дистанционный способ продажи товара</h4>
+      <p>При дистанционной продаже потребитель вправе отказаться от товара в любое время до его передачи, а после передачи — в течение 7 дней. При отсутствии информации о порядке и сроках возврата — в течение 3 месяцев с момента передачи. Исключение: товары надлежащего качества, изготовленные по индивидуальному заказу.</p>
+      <span class="law-tip">→ Применяется: интернет-магазины, онлайн-продажи</span>
+    </div>
+
+    <div class="law-card">
+      <h3>Ст. 13 ЗоЗПП</h3>
+      <h4>Ответственность изготовителя (продавца) за нарушение прав потребителя</h4>
+      <p>За нарушение прав потребителя изготовитель (исполнитель, продавец) несёт ответственность, предусмотренную законом или договором. Если требования не удовлетворены добровольно, суд взыскивает с ответчика штраф в размере 50% от суммы, присуждённой в пользу потребителя.</p>
+      <span class="law-tip">→ Штраф 50% + неустойка 3% в день = мощный инструмент давления</span>
+    </div>
+
+    <div class="law-card">
+      <h3>Ст. 782 ГК РФ</h3>
+      <h4>Односторонний отказ от договора возмездного оказания услуг</h4>
+      <p>Заказчик вправе отказаться от исполнения договора при условии оплаты исполнителю фактически понесённых им расходов. Исполнитель вправе отказаться от договора лишь при условии полного возмещения убытков заказчику.</p>
+      <span class="law-tip">→ Аналог ст. 32 ЗоЗПП на уровне ГК РФ</span>
+    </div>
+
+    <div class="law-card">
+      <h3>Ст. 23 ЗоЗПП</h3>
+      <h4>Неустойка за просрочку возврата денежных средств</h4>
+      <p>За каждый день просрочки возврата денежных средств продавец (исполнитель) уплачивает потребителю неустойку в размере 1% (для товаров) или 3% (для услуг) от суммы требования. Неустойка начисляется автоматически и не требует отдельного заявления.</p>
+      <span class="law-tip">→ За 30 дней просрочки набегает 90% от суммы претензии</span>
+    </div>
+  </div>
+  <footer>© 2025 ПисьмаСчастья · Не является юридической консультацией</footer>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE: HISTORY
+══════════════════════════════════════════════ -->
+<div id="page-history" class="page">
+  <div class="history-wrap">
+    <div style="margin-bottom:32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+      <div>
+        <div class="section-title">История претензий</div>
+        <div class="section-sub">Сохранённые документы в этом браузере</div>
+      </div>
+      <button class="btn-sm btn-print" onclick="clearHistory()" style="background:var(--fog2);color:#555;">🗑️ Очистить всё</button>
+    </div>
+    <div id="history-list"></div>
+  </div>
+  <footer>© 2025 ПисьмаСчастья</footer>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE: TIPS
+══════════════════════════════════════════════ -->
+<div id="page-tips" class="page">
+  <div class="tips-wrap">
+    <div style="margin-bottom:32px">
+      <div class="section-title">Советы и стратегия</div>
+      <div class="section-sub">Как грамотно добиться возврата денег</div>
+    </div>
+
+    <div class="tip-block">
+      <h3>📬 Как правильно отправить претензию</h3>
+      <ul>
+        <li>По email — на официальный адрес службы поддержки (с сохранением скриншота отправки)</li>
+        <li>Заказным письмом с уведомлением о вручении — самый надёжный способ</li>
+        <li>Через форму обратной связи на сайте — со скриншотом</li>
+        <li>Через мессенджер (Telegram/WhatsApp) — с сохранением переписки</li>
+      </ul>
+      <div class="alert-box">⚠️ Совет: всегда сохраняйте подтверждение отправки. Если дело дойдёт до суда, вам понадобится доказать, что претензия была направлена.</div>
+    </div>
+
+    <div class="tip-block">
+      <h3>📅 Сроки и дедлайны</h3>
+      <div class="timeline">
+        <div class="tl-item">
+          <h4>День 0 — Отправка претензии</h4>
+          <p>Фиксируйте дату отправки. С этого момента начинают течь все сроки.</p>
+        </div>
+        <div class="tl-item">
+          <h4>Дней 10 — Срок ответа компании</h4>
+          <p>Большинство претензий по ЗоЗПП требуют ответа в 10 дней. По товарам ненадлежащего качества — до 45 дней.</p>
+        </div>
+        <div class="tl-item">
+          <h4>После 10 дней — Начинает капать неустойка</h4>
+          <p>3% в день от суммы требования (для услуг). За месяц набегает 90%.</p>
+        </div>
+        <div class="tl-item">
+          <h4>После 10 дней — Можно идти в суд</h4>
+          <p>С иском о защите прав потребителя + штраф 50% + компенсация морального вреда.</p>
+        </div>
+        <div class="tl-item">
+          <h4>3 года — Срок исковой давности</h4>
+          <p>Успейте подать иск в течение 3 лет с момента нарушения ваших прав.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-block">
+      <h3>💪 Если компания отказала или молчит</h3>
+      <ul>
+        <li><b>Роспотребнадзор</b> — жалоба на сайте petition.rospotrebnadzor.ru</li>
+        <li><b>Банк/картёжник</b> — чарджбэк: попросите банк отменить платёж (в течение 120 дней)</li>
+        <li><b>Прокуратура</b> — если компания систематически нарушает права потребителей</li>
+        <li><b>Суд</b> — иски до 100 000 руб. рассматриваются мировым судьёй; госпошлина не взимается по делам ЗоЗПП</li>
+        <li><b>Отзывы</b> — негативные отзывы на Otzovik.com, Google Maps, Яндекс.Картах</li>
+      </ul>
+    </div>
+
+    <div class="tip-block">
+      <h3>🎯 Частые ошибки при подаче претензий</h3>
+      <ul>
+        <li>Не сохранять чек или подтверждение оплаты — всегда делайте скриншоты</li>
+        <li>Не указывать конкретные сроки и суммы в претензии</li>
+        <li>Писать эмоционально и без ссылок на законы — претензия должна быть юридической</li>
+        <li>Не отправлять претензию письменно (только звонить в поддержку)</li>
+        <li>Принимать первый отказ как окончательный — большинство компаний идут навстречу после второй претензии</li>
+      </ul>
+      <div class="alert-box">💡 Лайфхак: в конце претензии всегда упоминайте 50% штраф и неустойку. Это существенно повышает мотивацию компании вернуть деньги добровольно.</div>
+    </div>
+  </div>
+  <footer>© 2025 ПисьмаСчастья · Не является юридической консультацией</footer>
+</div>
+
+<!-- MODAL for history view -->
+<div class="modal-overlay" id="historyModal" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('historyModal').classList.remove('open')">✕ Закрыть</button>
+    <h2 id="modalTitle">Претензия</h2>
+    <div class="modal-text" id="modalText"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════
+// TEMPLATES
+// ══════════════════════════════════════
+const templates = {
+  subscription: `Генеральному директору
+[company]
+[companyAddress]
+
+от [fio],
+проживающего(ей) по адресу: [address]
+тел./e-mail: [contacts]
+
+                            ДОСУДЕБНАЯ ПРЕТЕНЗИЯ
+               о расторжении договора и возврате денежных средств
+
+«[date]» мною была произведена оплата подписки / автопродления сервиса на сумму [amount] руб.
+Способ оплаты: [payment].
+
+[details]
+
+В соответствии со ст. 32 Закона РФ «О защите прав потребителей», ст. 782 ГК РФ потребитель вправе отказаться от услуги в любое время при условии оплаты исполнителю фактически понесённых расходов. Фактически понесённые расходы мне не известны и документально не подтверждены.
+
+На основании вышеизложенного, руководствуясь ст. 32 ЗоЗПП, ст. 782 ГК РФ,
+
+ТРЕБУЮ:
+1. В течение 10 (десяти) календарных дней с момента получения настоящей претензии расторгнуть договор оказания услуг и возвратить уплаченные мною денежные средства в размере [amount] (______ рублей) на те же реквизиты, с которых была произведена оплата.
+
+В случае неудовлетворения настоящих требований в добровольном порядке, я вынужден(а) буду обратиться в суд с исковым заявлением о защите прав потребителя, где помимо возврата уплаченных средств дополнительно потребую:
+   • неустойку в размере 3% от суммы требования за каждый день просрочки (ст. 31 ЗоЗПП);
+   • компенсацию морального вреда (ст. 15 ЗоЗПП);
+   • штраф в размере 50% от суммы, присуждённой судом (п. 6 ст. 13 ЗоЗПП).
+
+Дата: [date]
+Подпись: _________________ / [fio] /`,
+
+  goods: `Генеральному директору
+[company]
+[companyAddress]
+
+от [fio],
+проживающего(ей) по адресу: [address]
+тел./e-mail: [contacts]
+
+                            ДОСУДЕБНАЯ ПРЕТЕНЗИЯ
+         о возврате товара ненадлежащего качества и возврате денежных средств
+
+«[date]» в [company] мной был приобретён товар на сумму [amount] руб.
+Способ оплаты: [payment].
+
+В ходе использования товара были обнаружены следующие недостатки:
+[details]
+
+Указанные недостатки являются существенными, возникли не по моей вине и не могли быть обнаружены при приёмке товара.
+
+В соответствии со ст. 18 Закона РФ «О защите прав потребителей» при обнаружении в товаре недостатков потребитель вправе отказаться от исполнения договора купли-продажи и потребовать возврата уплаченной суммы.
+
+ТРЕБУЮ:
+В течение 10 (десяти) дней с момента получения настоящей претензии возвратить уплаченные денежные средства в размере [amount] (______ рублей).
+
+Приложения:
+1. Копия кассового чека / подтверждения оплаты
+2. Копия гарантийного талона (при наличии)
+3. Фотоматериалы недостатков
+
+Дата: [date]
+Подпись: _________________ / [fio] /`,
+
+  service: `Генеральному директору
+[company]
+[companyAddress]
+
+от [fio],
+проживающего(ей) по адресу: [address]
+тел./e-mail: [contacts]
+
+                            ДОСУДЕБНАЯ ПРЕТЕНЗИЯ
+                   о неоказании (некачественном оказании) услуги
+
+«[date]» между мной и [company] был заключён договор на оказание услуги стоимостью [amount] руб.
+Оплата произведена в полном объёме: [payment].
+
+Однако услуга не была оказана / была оказана ненадлежащим образом:
+[details]
+
+В соответствии со ст. 29 Закона РФ «О защите прав потребителей» при обнаружении недостатков оказанной услуги потребитель вправе потребовать возврата уплаченной суммы.
+
+ТРЕБУЮ:
+В течение 10 (десяти) дней с момента получения настоящей претензии возвратить уплаченные денежные средства в размере [amount] (______ рублей) в полном объёме.
+
+В случае неудовлетворения требований буду вынужден(а) обратиться в суд с взысканием неустойки 3% за каждый день просрочки и штрафа 50% (ст. 13 ЗоЗПП).
+
+Дата: [date]
+Подпись: _________________ / [fio] /`,
+
+  "online-course": `Генеральному директору
+[company]
+[companyAddress]
+
+от [fio],
+проживающего(ей) по адресу: [address]
+тел./e-mail: [contacts]
+
+                            ДОСУДЕБНАЯ ПРЕТЕНЗИЯ
+              о возврате денежных средств за онлайн-курс / инфопродукт
+
+«[date]» мной был оплачен доступ к онлайн-курсу / инфопродукту на сумму [amount] руб.
+Способ оплаты: [payment].
+
+[details]
+
+Согласно ст. 26.1 Закона РФ «О защите прав потребителей» при дистанционном способе продажи потребитель вправе отказаться от товара (услуги) в любое время до его передачи, а после передачи — в течение 7 дней. При отсутствии информации о порядке и сроках возврата — в течение 3 месяцев.
+
+Надлежащая информация о порядке и сроках возврата мне предоставлена не была.
+
+ТРЕБУЮ:
+В течение 10 (десяти) дней с момента получения настоящей претензии расторгнуть договор и возвратить уплаченные денежные средства в размере [amount] (______ рублей) на реквизиты, с которых производилась оплата.
+
+В случае отказа или игнорирования я буду вынужден(а) обратиться в суд, а также направить жалобу в Роспотребнадзор и ФНС России.
+
+Дата: [date]
+Подпись: _________________ / [fio] /`
+};
+
+// ══════════════════════════════════════
+// GENERATE
+// ══════════════════════════════════════
+function generate() {
+  const t = document.getElementById('template').value;
+  let text = templates[t];
+
+  const v = {
+    fio: document.getElementById('fio').value.trim() || '[ФИО не указано]',
+    address: document.getElementById('address').value.trim() || '[адрес не указан]',
+    contacts: document.getElementById('contacts').value.trim() || '[контакты не указаны]',
+    company: document.getElementById('company').value.trim() || '[название компании]',
+    companyAddress: document.getElementById('companyAddress').value.trim() || '[юридический адрес]',
+    date: document.getElementById('date').value.trim() || new Date().toLocaleDateString('ru-RU'),
+    amount: document.getElementById('amount').value.trim() || '[сумма]',
+    payment: document.getElementById('payment').value.trim() || '[способ оплаты не указан]',
+    details: document.getElementById('details').value.trim()
+  };
+
+  text = text
+    .replace(/\[fio\]/g, v.fio)
+    .replace(/\[address\]/g, v.address)
+    .replace(/\[contacts\]/g, v.contacts)
+    .replace(/\[company\]/g, v.company)
+    .replace(/\[companyAddress\]/g, v.companyAddress)
+    .replace(/\[date\]/g, v.date)
+    .replace(/\[amount\]/g, v.amount)
+    .replace(/\[payment\]/g, v.payment)
+    .replace(/\[details\]/g, v.details || '');
+
+  const result = document.getElementById('result');
+  result.textContent = text;
+  result.className = '';
+  showToast('✅ Претензия сгенерирована!', 'success');
+}
+
+// ══════════════════════════════════════
+// AI GENERATE
+// ══════════════════════════════════════
+async function generateAI() {
+  const fio = document.getElementById('fio').value.trim();
+  const company = document.getElementById('company').value.trim();
+  const amount = document.getElementById('amount').value.trim();
+  const details = document.getElementById('details').value.trim();
+  const templateType = document.getElementById('template').value;
+  const address = document.getElementById('address').value.trim();
+  const contacts = document.getElementById('contacts').value.trim();
+  const companyAddress = document.getElementById('companyAddress').value.trim();
+  const date = document.getElementById('date').value.trim();
+  const payment = document.getElementById('payment').value.trim();
+
+  if (!fio || !company || !amount) {
+    showToast('⚠️ Заполните хотя бы ФИО, компанию и сумму', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('aiBtn');
+  const icon = document.getElementById('aiIcon');
+  const aiText = document.getElementById('aiText');
+  btn.classList.add('loading');
+  icon.innerHTML = '<span class="spinner"></span>';
+  aiText.textContent = 'AI составляет претензию...';
+
+  const typeMap = {
+    subscription: 'возврат денег за подписку / автопродление',
+    goods: 'возврат товара ненадлежащего качества',
+    service: 'неоказанная или некачественная услуга',
+    'online-course': 'возврат денег за онлайн-курс / инфопродукт'
+  };
+
+  const prompt = `Ты — юрист по защите прав потребителей в России. Составь юридически грамотную досудебную претензию на русском языке.
+
+Тип претензии: ${typeMap[templateType]}
+ФИО заявителя: ${fio}
+Адрес заявителя: ${address || 'не указан'}
+Контакты: ${contacts || 'не указаны'}
+Компания-ответчик: ${company}
+Адрес компании: ${companyAddress || 'не известен'}
+Дата оплаты: ${date || 'не указана'}
+Сумма к возврату: ${amount} руб.
+Способ оплаты: ${payment || 'не указан'}
+Обстоятельства дела: ${details || 'не указаны'}
+
+Требования к претензии:
+- Формальный деловой стиль
+- Ссылки на конкретные статьи ЗоЗПП и ГК РФ
+- Чёткое требование о возврате с указанием срока (10 дней)
+- Упоминание последствий (неустойка 3%/день, штраф 50%, моральный вред, обращение в Роспотребнадзор)
+- Адаптируй текст под конкретные обстоятельства дела
+- Не используй квадратные скобки — все данные уже предоставлены, подставь их в текст
+- Объём: 300–500 слов`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content?.map(i => i.text || '').join('') || '';
+
+    if (text) {
+      const result = document.getElementById('result');
+      result.textContent = text;
+      result.className = '';
+      showToast('✨ AI успешно составил претензию!', 'success');
+    } else {
+      showToast('❌ Ошибка AI. Попробуйте обычный генератор.', 'error');
+    }
+  } catch (e) {
+    showToast('❌ Ошибка соединения с AI', 'error');
+  } finally {
+    btn.classList.remove('loading');
+    icon.innerHTML = '✨';
+    aiText.textContent = 'Улучшить с помощью AI';
+  }
+}
+
+// ══════════════════════════════════════
+// COPY
+// ══════════════════════════════════════
+function copyResult() {
+  const text = document.getElementById('result').textContent;
+  if (!text || document.getElementById('result').classList.contains('placeholder')) {
+    showToast('⚠️ Сначала сгенерируйте претензию', 'error'); return;
+  }
+  navigator.clipboard.writeText(text).then(() => showToast('📋 Скопировано в буфер!', 'success'));
+}
+
+// ══════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════
+function saveToHistory() {
+  const text = document.getElementById('result').textContent;
+  if (!text || document.getElementById('result').classList.contains('placeholder')) {
+    showToast('⚠️ Сначала сгенерируйте претензию', 'error'); return;
+  }
+
+  const history = JSON.parse(localStorage.getItem('pretensions') || '[]');
+  const typeLabels = {
+    subscription: 'Подписка', goods: 'Товар', service: 'Услуга', 'online-course': 'Курс'
+  };
+  const type = document.getElementById('template').value;
+  const company = document.getElementById('company').value.trim() || 'Компания';
+  const amount = document.getElementById('amount').value.trim() || '?';
+  history.unshift({
+    id: Date.now(),
+    type,
+    title: `${typeLabels[type]} · ${company} · ${amount} руб.`,
+    date: new Date().toLocaleDateString('ru-RU'),
+    text
+  });
+  localStorage.setItem('pretensions', JSON.stringify(history.slice(0, 50)));
+  showToast('💾 Сохранено в историю!', 'success');
+}
+
+function loadHistory() {
+  const history = JSON.parse(localStorage.getItem('pretensions') || '[]');
+  const list = document.getElementById('history-list');
+  const icons = { subscription: '💳', goods: '📦', service: '🔧', 'online-course': '🎓' };
+  const tags = { subscription: 'Подписка', goods: 'Товар', service: 'Услуга', 'online-course': 'Курс' };
+  const tagClasses = { subscription: 'tag-subscription', goods: 'tag-goods', service: 'tag-service', 'online-course': 'tag-course' };
+
+  if (!history.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">🗂️</div><p>Сохранённых претензий пока нет.<br>Создайте претензию и нажмите «Сохранить».</p></div>`;
+    return;
+  }
+
+  list.innerHTML = history.map(h => `
+    <div class="history-item" onclick="openModal('${h.id}')">
+      <div class="history-icon">${icons[h.type] || '📄'}</div>
+      <div class="history-body">
+        <div class="history-title">${h.title}</div>
+        <div class="history-meta">Создана: ${h.date}</div>
+      </div>
+      <span class="history-tag ${tagClasses[h.type]}">${tags[h.type]}</span>
+      <button class="history-del" onclick="deleteHistory(event, ${h.id})">🗑️</button>
+    </div>
+  `).join('');
+}
+
+function openModal(id) {
+  const history = JSON.parse(localStorage.getItem('pretensions') || '[]');
+  const item = history.find(h => h.id == id);
+  if (!item) return;
+  document.getElementById('modalTitle').textContent = item.title;
+  document.getElementById('modalText').textContent = item.text;
+  document.getElementById('historyModal').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('historyModal')) {
+    document.getElementById('historyModal').classList.remove('open');
+  }
+}
+
+function deleteHistory(e, id) {
+  e.stopPropagation();
+  let history = JSON.parse(localStorage.getItem('pretensions') || '[]');
+  history = history.filter(h => h.id != id);
+  localStorage.setItem('pretensions', JSON.stringify(history));
+  loadHistory();
+  showToast('🗑️ Удалено', 'success');
+}
+
+function clearHistory() {
+  if (!confirm('Удалить все сохранённые претензии?')) return;
+  localStorage.removeItem('pretensions');
+  loadHistory();
+}
+
+// ══════════════════════════════════════
+// CHECKER
+// ══════════════════════════════════════
+const checkerQuestions = [
+  {
+    q: 'Какой тип сделки?',
+    opts: ['Покупка товара онлайн (интернет-магазин)', 'Покупка товара в магазине', 'Услуга / подписка / курс', 'Ещё не знаю']
+  },
+  {
+    q: 'Сколько времени прошло с момента покупки?',
+    opts: ['Менее 7 дней', '7–14 дней', '15 дней – 3 месяца', 'Более 3 месяцев']
+  },
+  {
+    q: 'Что является основанием для претензии?',
+    opts: ['Товар/услуга не соответствует описанию', 'Товар сломан / услуга не оказана', 'Просто передумал(а)', 'Несанкционированное списание / автопродление']
+  },
+  {
+    q: 'У вас есть подтверждение оплаты?',
+    opts: ['Да, есть чек / скриншот / выписка', 'Частично (есть только один документ)', 'Нет, ничего не сохранил(а)']
+  },
+  {
+    q: 'Компания уже отказала вам в возврате?',
+    opts: ['Нет, я ещё не обращался(ась)', 'Да, отказала устно', 'Да, отказала письменно', 'Игнорирует мои запросы']
+  }
+];
+
+let checkerStep = 0;
+let checkerAnswers = [];
+
+function renderChecker() {
+  const content = document.getElementById('checker-content');
+  if (checkerStep >= checkerQuestions.length) {
+    renderCheckerResult();
+    return;
+  }
+  const q = checkerQuestions[checkerStep];
+  const pct = Math.round((checkerStep / checkerQuestions.length) * 100);
+  content.innerHTML = `
+    <div class="step-counter">Вопрос ${checkerStep + 1} из ${checkerQuestions.length}</div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div class="checker-q">${q.q}</div>
+    <div class="checker-opts">
+      ${q.opts.map((o, i) => `
+        <div class="checker-opt" onclick="checkerSelect(${i})">
+          <div class="checker-dot"></div>
+          <span>${o}</span>
+        </div>
+      `).join('')}
+    </div>
+    ${checkerStep > 0 ? `<button class="btn-sm btn-print" onclick="checkerBack()" style="margin-top:0">← Назад</button>` : ''}
+  `;
+}
+
+function checkerSelect(idx) {
+  checkerAnswers[checkerStep] = idx;
+  checkerStep++;
+  renderChecker();
+}
+
+function checkerBack() {
+  checkerStep--;
+  renderChecker();
+}
+
+function renderCheckerResult() {
+  // Simple scoring
+  const [type, timing, reason, proof, status] = checkerAnswers;
+  let score = 0;
+  let tips = [];
+
+  if (timing === 0) { score += 3; tips.push('✅ Отлично — вы в сроке 7 дней (дистанционная продажа)'); }
+  else if (timing === 1) { score += 2; tips.push('✅ Хорошо — 7–14 дней, шансы высокие'); }
+  else if (timing === 2) { score += 1; tips.push('⚠️ Прошло более 2 недель — шансы снижены, но возможны'); }
+  else { score -= 1; tips.push('❌ Более 3 месяцев — сложнее, нужны веские основания'); }
+
+  if (reason !== 2) { score += 2; tips.push('✅ Есть объективное основание для возврата'); }
+  else { score += 0; tips.push('⚠️ «Передумал» — возможен только при дистанционной продаже в течение 7 дней'); }
+
+  if (proof === 0) { score += 3; tips.push('✅ Есть полное подтверждение оплаты — это сильная позиция'); }
+  else if (proof === 1) { score += 1; tips.push('⚠️ Частичные документы — постарайтесь найти всё'); }
+  else { score -= 2; tips.push('❌ Нет подтверждения оплаты — серьёзная проблема'); }
+
+  let cls = 'success', emoji = '🟢', verdict = '', rec = '';
+  if (score >= 6) {
+    cls = 'success'; emoji = '🟢'; verdict = 'Высокие шансы на возврат';
+    rec = 'Составьте претензию прямо сейчас — ваша позиция сильная. Большинство компаний возвращают деньги уже на этапе досудебной претензии.';
+  } else if (score >= 3) {
+    cls = 'warning'; emoji = '🟡'; verdict = 'Умеренные шансы';
+    rec = 'Претензию подать стоит. Возможно, потребуется дополнительно обратиться в Роспотребнадзор или банк для чарджбэка.';
+  } else {
+    cls = 'danger'; emoji = '🔴'; verdict = 'Сложная ситуация — нужна консультация юриста';
+    rec = 'Рекомендуем обратиться за юридической консультацией. Возможно, есть основания, которые неочевидны.';
+  }
+
+  document.getElementById('checker-content').innerHTML = `
+    <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+    <div class="checker-result ${cls}">
+      <h3>${emoji} ${verdict}</h3>
+      <p>${rec}</p>
+      <br>
+      ${tips.map(t => `<p style="margin-bottom:6px">${t}</p>`).join('')}
+      <br>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+        <button class="btn-sm btn-save" onclick="showPage('generator')">🚀 Составить претензию</button>
+        <button class="btn-sm btn-print" onclick="checkerStep=0;checkerAnswers=[];renderChecker()">🔄 Пройти заново</button>
+      </div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════
+// PAGE ROUTING
+// ══════════════════════════════════════
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  const tabs = ['home','generator','checker','laws','history','tips'];
+  const idx = tabs.indexOf(name);
+  if (idx >= 0) document.querySelectorAll('.nav-tab')[idx].classList.add('active');
+  if (name === 'history') loadHistory();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ══════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════
+let toastTimer;
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = 'toast', 3000);
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+document.getElementById('date').value = new Date().toLocaleDateString('ru-RU');
+renderChecker();
+</script>
+</body>
+</html>
